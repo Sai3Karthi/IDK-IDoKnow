@@ -28,10 +28,19 @@ def start_llama_server(config=None, base_dir=None):
         # Prefer gemma models
         model = None
         pref = None
-        with open("model_choice.json", "r") as f:
-            data = json.load(f)
-            pref = data.get("model")
+        try:
+            model_choice_path = base_dir / "model_choice.json"
+            if model_choice_path.exists():
+                with open(model_choice_path, "r") as f:
+                    data = json.load(f)
+                    pref = data.get("model")
+        except Exception as e:
+            print(f"[WARN] Could not load model_choice.json: {e}")
+            pref = None
+            
         for pattern in [pref, "gemma"]:
+            if pattern is None:
+                continue
             for file in ggufs:
                 if pattern.lower() in file.name.lower():
                     model = file

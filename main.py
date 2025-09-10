@@ -47,12 +47,12 @@ app = FastAPI()
 # Startup and shutdown handling
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Start and stop server processes"""
+
     global _llama_server
     
     # Start setup GUI after a brief delay (FastAPI will be ready)
     threading.Timer(2.0, lambda: subprocess.Popen(
-        [sys.executable, str(BASE_DIR / "Modules/setpath.py")]
+        [sys.executable, str(BASE_DIR / "Modules" / "setpath.py")]
     )).start()
     
     # Start llama server if config exists
@@ -88,7 +88,13 @@ def set_config(new_config: Config):
     global config, _llama_server
     
     # Convert model to dict - works with both Pydantic v1 and v2
-    config_dict = new_config.model_dump_json() if hasattr(new_config, "model_dump_json") else new_config.model_dump()
+    if hasattr(new_config, "dict"):
+        # Pydantic v1
+        config_dict = new_config.dict()
+    else:
+        # Pydantic v2
+        config_dict = new_config.model_dump()
+    
     config.update(config_dict)
     save_config(config)
     

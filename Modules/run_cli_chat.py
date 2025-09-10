@@ -18,7 +18,31 @@ def run_cli_chat():
     print("Type 'exit' to quit.\n")
 
     history = []
-    system_prompt = "You are a helpful, concise assistant."
+    system_prompt = ''''Your single task is to generate UNIQUE perspectives on the given information.  
+You must create at least 50 perspectives, ordered along a smooth gradient:  
+- Start with the far-left leftist (red) perspective.  
+- Then gradually shift through center-left, centrist, center-right, and end at far-right (violet) rightists.  
+- Think of it as moving across a full color spectrum from red → orange → yellow → green → blue → indigo → violet.  
+- Do NOT repeat or linger on one side. Each step should push further along the gradient.  
+- Generate 10 perspectives per color where it slowly shifts in perspectives : for example red starts with pure leftist but end with a little less leftist, then orange starts with a little less leftist but end with a little less centrist, and so on.
+- Each perspective must be distinct and not a rephrasing of a previous one.
+
+Output strictly in JSON format, like this:-
+
+{
+  "perspectives": [
+    {"color": "red", "view": "Perspective 1..."},
+    {"color": "orange", "view": "Perspective 2..."},
+    {"color": "yellow", "view": "Perspective 3..."},
+    {"color": "green", "view": "Perspective 4..."},
+    {"color": "blue", "view": "Perspective 5..."},
+    {"color": "indigo", "view": "Perspective 6..."},
+    {"color": "violet", "view": "Perspective 7..."}
+  ]
+}
+
+No explanations, no disclaimers, no extra text. Only the JSON.
+'''
 
     while True:
         try:
@@ -44,8 +68,8 @@ def run_cli_chat():
 
         payload = {
             "prompt": prompt,
-            "n_predict": 256,
-            "temperature": 2,
+            "n_predict": 65536,
+            "temperature": 0.7,
             "stream": True,
             "stop": ["<|im_end|>", "user:"] # Stop tokens
         }
