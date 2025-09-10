@@ -1,0 +1,74 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.venv*/
+pip-wheel-metadata/
+*.egg-info/
+.eggs/
+dist/
+build/
+site/
+.coverage*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.pyright/
+.pyre/
+.pytype/
+.cache/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs
+logs/
+*.log
+
+# Env / Secrets
+.env
+.env.*
+*.env
+
+# LLM models and large weights
+AImodels/
+AImodells/
+*.gguf
+*.ggml*
+*.safetensors
+*.pt
+*.bin
+*.ckpt
+*.onnx
+*.tflite
+
+# llama binaries, builds, and caches
+llama/build/
+llama/models/
+llama/.cache/
+llama/cache/
+llama/out/
+llama/logs/
+llama/*.partial
+llama/**/*.exe
+llama/**/*.dll
+llama/**/*.pdb
+llama/**/*.lib
+llama/**/*.zip
+llama/**/*.tar
+
+# Generic binaries (avoid committing compiled artifacts)
+*.exe
