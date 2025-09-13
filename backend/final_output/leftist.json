@@ -2,85 +2,85 @@
     {
         "color": "yellow",
         "bias_x": 0.3768,
+        "significance_y": 0.6,
+        "text": "Understanding the operational details is crucial to evaluating the validity of the criticism."
+    },
+    {
+        "color": "red",
+        "bias_x": 0.0145,
+        "significance_y": 0.6,
+        "text": "The focus on 'operation' and 'security' masks the humanitarian crisis at our borders."
+    },
+    {
+        "color": "orange",
+        "bias_x": 0.2754,
+        "significance_y": 0.4,
+        "text": "Congress's criticism is a reminder that policy decisions must be grounded in evidence and ethical considerations."
+    },
+    {
+        "color": "orange",
+        "bias_x": 0.1449,
+        "significance_y": 0.8,
+        "text": "The lack of transparency surrounding Operation Sindoor is deeply concerning to civil liberties advocates."
+    },
+    {
+        "color": "red",
+        "bias_x": 0.1159,
+        "significance_y": 0.4,
+        "text": "The government is failing to uphold its responsibility to protect all people, including immigrants."
+    },
+    {
+        "color": "yellow",
+        "bias_x": 0.3478,
+        "significance_y": 0.9,
+        "text": "The long-term socio-economic impact of this operation needs careful consideration."
+    },
+    {
+        "color": "yellow",
+        "bias_x": 0.3188,
+        "significance_y": 0.7,
+        "text": "The media's framing of this operation will significantly shape public opinion."
+    },
+    {
+        "color": "orange",
+        "bias_x": 0.1594,
+        "significance_y": 0.6,
+        "text": "Congress has a duty to investigate claims of excessive force and mistreatment of individuals during this operation."
+    },
+    {
+        "color": "yellow",
+        "bias_x": 0.3333,
         "significance_y": 0.5,
-        "text": "The focus should be on the evidence and the legal process, not on political rhetoric."
+        "text": "Congress has a right to scrutinize government operations, but the criticism should be constructive."
     },
     {
         "color": "red",
         "bias_x": 0.0,
         "significance_y": 0.8,
-        "text": "The BJP's systematic voter fraud is a direct threat to the democratic foundations of India."
+        "text": "This criticism is a necessary stand against the militarization of our borders and the criminalization of migration."
     },
     {
         "color": "red",
-        "bias_x": 0.1159,
-        "significance_y": 0.6,
-        "text": "We must demand transparency and accountability from all institutions involved in the electoral process."
-    },
-    {
-        "color": "orange",
-        "bias_x": 0.2464,
-        "significance_y": 0.4,
-        "text": "The public's perception of the Election Commission's impartiality is at stake."
+        "bias_x": 0.1304,
+        "significance_y": 0.7,
+        "text": "This is a critical moment for Congress to stand up for its values and condemn this brutal policy."
     },
     {
         "color": "yellow",
-        "bias_x": 0.4058,
-        "significance_y": 0.7,
-        "text": "The Election Commission needs to demonstrate its independence and fairness by taking this matter seriously."
+        "bias_x": 0.4203,
+        "significance_y": 0.8,
+        "text": "The international community will be watching how this situation unfolds."
     },
     {
         "color": "red",
         "bias_x": 0.0435,
         "significance_y": 0.5,
-        "text": "Such widespread fraud would have devastating consequences for the future of Indian democracy."
-    },
-    {
-        "color": "orange",
-        "bias_x": 0.2319,
-        "significance_y": 0.7,
-        "text": "A thorough and impartial investigation is necessary to either substantiate or refute these serious accusations."
-    },
-    {
-        "color": "red",
-        "bias_x": 0.1304,
-        "significance_y": 0.8,
-        "text": "The Congress Party's allegations are a stark warning about the fragility of Indian democracy today."
-    },
-    {
-        "color": "yellow",
-        "bias_x": 0.3478,
-        "significance_y": 0.6,
-        "text": "The legal avenues for challenging election results should be pursued thoroughly and peacefully."
-    },
-    {
-        "color": "red",
-        "bias_x": 0.058,
-        "significance_y": 0.6,
-        "text": "This is not just about one election; it's about the long-term viability of our democratic system."
-    },
-    {
-        "color": "red",
-        "bias_x": 0.029,
-        "significance_y": 0.7,
-        "text": "The Election Commission must take immediate action to investigate these allegations and restore public trust."
+        "text": "The resources spent on operations like this could be better used for social programs and immigrant integration."
     },
     {
         "color": "orange",
         "bias_x": 0.1739,
         "significance_y": 0.5,
-        "text": "The Election Commission faces a critical test: will it act independently to investigate, or will it succumb to political pressure?"
-    },
-    {
-        "color": "yellow",
-        "bias_x": 0.2899,
-        "significance_y": 0.8,
-        "text": "The timing of these allegations, close to the election results, raises questions about their motives."
-    },
-    {
-        "color": "red",
-        "bias_x": 0.1014,
-        "significance_y": 0.4,
-        "text": "The government will undoubtedly try to suppress this story and discredit the opposition."
+        "text": "This operation raises serious questions about the balance between national security and individual rights."
     }
 ]

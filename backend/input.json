@@ -1,25 +1,4 @@
 {
-  "input": "Congress Party accuses BJP of systematic voter fraud in recent state elections",
-  "context": "The Indian National Congress has filed multiple complaints alleging that the Bharatiya Janata Party (BJP) manipulated voter rolls, used money and coercion, and deployed technology to commit electoral fraud in key swing constituencies across several states.",
-  "key_claims": [
-    "Deletion of opposition voters from electoral rolls",
-    "Distribution of cash and freebies to influence voters", 
-    "Misuse of government machinery during campaigns",
-    "Irregularities in Electronic Voting Machine (EVM) functionality",
-    "Intimidation of opposition candidates and workers"
-  ],
-  "political_context": [
-    "High-stakes state elections with national implications",
-    "BJP's dominant position in Indian politics since 2014",
-    "Congress struggling to regain electoral relevance",
-    "Election Commission's role under scrutiny"
-  ],
-  "stakeholders": [
-    "Congress Party leadership and workers",
-    "BJP leadership and supporters", 
-    "Election Commission of India",
-    "Voters in affected constituencies",
-    "Civil society and media organizations",
-    "Opposition alliance partners"
-  ]
+  "topic": "Operation Sindoor Criticized by Congress",
+  "text": "In a recent turn of events, Operation Sindoor—a major initiative led by the Indian Army—has come under heavy criticism from the Congress party. Congress leaders have accused the government of politicizing military operations and have questioned the motives behind the mission. Several Congress spokespersons claimed that the operation was used for political mileage rather than national security, and some even made statements that were perceived as disrespectful to the Indian Army's efforts and sacrifices. The controversy has sparked widespread debate on social media, with many expressing outrage over Congress's remarks and their perceived lack of respect for the armed forces."
 }

@@ -1,20 +1,20 @@
 [
     {
         "color": "green",
-        "bias_x": 0.5507,
-        "significance_y": 0.73,
-        "text": "The Election Commission's ability to maintain its impartiality is paramount for the health of Indian democracy."
-    },
-    {
-        "color": "green",
-        "bias_x": 0.5362,
-        "significance_y": 0.6,
-        "text": "The opposition has a responsibility to present credible evidence to support its serious claims."
-    },
-    {
-        "color": "green",
         "bias_x": 0.4928,
-        "significance_y": 0.69,
-        "text": "The political noise surrounding this issue should not overshadow the fundamental legal questions at hand."
+        "significance_y": 0.7,
+        "text": "It's important to understand the specific details of the operation before forming a final judgment."
+    },
+    {
+        "color": "green",
+        "bias_x": 0.5072,
+        "significance_y": 0.4,
+        "text": "The opposition's criticism seems to be more about scoring political points than offering genuine solutions."
+    },
+    {
+        "color": "green",
+        "bias_x": 0.4783,
+        "significance_y": 0.5,
+        "text": "The effectiveness of the operation will ultimately determine whether the criticism was justified."
     }
 ]
