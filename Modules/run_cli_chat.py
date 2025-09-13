@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 
@@ -18,31 +19,42 @@ def run_cli_chat():
     print("Type 'exit' to quit.\n")
 
     history = []
-    system_prompt = ''''Your single task is to generate UNIQUE perspectives on the given information.  
-You must create at least 50 perspectives, ordered along a smooth gradient:  
-- Start with the far-left leftist (red) perspective.  
-- Then gradually shift through center-left, centrist, center-right, and end at far-right (violet) rightists.  
-- Think of it as moving across a full color spectrum from red → orange → yellow → green → blue → indigo → violet.  
-- Do NOT repeat or linger on one side. Each step should push further along the gradient.  
-- Generate 10 perspectives per color where it slowly shifts in perspectives : for example red starts with pure leftist but end with a little less leftist, then orange starts with a little less leftist but end with a little less centrist, and so on.
-- Each perspective must be distinct and not a rephrasing of a previous one.
+    system_prompt = '''Your task: Generate UNIQUE perspectivesor ways to look at that information on the given input.
 
-Output strictly in JSON format, like this:-
+Rules:
+1. If input is political → generate political perspectives.  
+2. If input is non-political → generate perspectives for that topic.  
+3. If input is nonsense or is not an information that can be analysed (e.g. "hello", "haaaa") → output : "provide valid input".  
+4. DONT REPEAT PERSPECTIVES. EACH PERSPECTIVE MUST BE UNIQUE.
+Output:
+- Always exactly 70 perspectives (10 per color).  
+- Ordered as a gradient:  
+  red (far-left) → orange (center-left) → yellow (centrist) → green (center-right) → blue → indigo → violet (far-right).  
+- Each color = 10 perspectives.  
+- Each perspective must be different, not rephrased.  
+- Start red as pure far-left, end red as slightly less leftist.  
+- Orange starts slightly less leftist, ends slightly less centrist.  
+- Yellow starts slightly less centrist, ends true centrist.  
+- Green starts slightly less centrist, ends slightly less right.  
+- Blue continues rightward, indigo more right, violet is far-right.  
 
+Format:
+Output must ONLY be JSON (no text, no notes).  
+
+JSON format:
 {
   "perspectives": [
     {"color": "red", "view": "Perspective 1..."},
-    {"color": "orange", "view": "Perspective 2..."},
-    {"color": "yellow", "view": "Perspective 3..."},
-    {"color": "green", "view": "Perspective 4..."},
-    {"color": "blue", "view": "Perspective 5..."},
-    {"color": "indigo", "view": "Perspective 6..."},
-    {"color": "violet", "view": "Perspective 7..."}
+    {"color": "red", "view": "Perspective 2..."},
+    ...
+    {"color": "violet", "view": "Perspective 50..."}
   ]
 }
 
-No explanations, no disclaimers, no extra text. Only the JSON.
 '''
+    export_dir = "export"
+    if not os.path.exists(export_dir):
+        os.makedirs(export_dir)
 
     while True:
         try:
@@ -54,17 +66,8 @@ No explanations, no disclaimers, no extra text. Only the JSON.
             print("Bye.")
             break
 
-        # The prompt format for llama.cpp server is typically just the user's message.
-        # The server can be configured to use a chat template.
-        # For simplicity, we'll just send the latest user message.
-        
-        # A more advanced implementation would send the history for context.
-        # Let's build a simple prompt with history.
         prompt = f"<|im_start|>system\n{system_prompt}<|im_end|>\n"
-        for role, content in history:
-            prompt += f"<|im_start|>{role}\n{content}<|im_end|>\n"
         prompt += f"<|im_start|>user\n{user}<|im_end|>\n<|im_start|>assistant\n"
-
 
         payload = {
             "prompt": prompt,
@@ -74,7 +77,7 @@ No explanations, no disclaimers, no extra text. Only the JSON.
             "stop": ["<|im_end|>", "user:"] # Stop tokens
         }
 
-        print("AI> ", end="", flush=True)
+        print("Ramsami> ", end="", flush=True)
         full_response = ""
         try:
             with requests.post(f"{LLAMA_SERVER_URL}/completion", json=payload, stream=True) as response:
@@ -95,9 +98,26 @@ No explanations, no disclaimers, no extra text. Only the JSON.
         except requests.RequestException as e:
             print(f"\n[ERR] Request to llama.cpp server failed: {e}")
             break
-        
-        history.append(("user", user))
-        history.append(("assistant", full_response.strip()))
-        print()
+
+        print()  # Newline after model output
+
+        # Check for "provide valid input"
+        if "provide valid input" in full_response.lower():
+            print("[Model requested valid input. Try again.]\n")
+            continue
+
+        # Try to parse as JSON and save
+        try:
+            data = json.loads(full_response)
+            safe_filename = "".join(c if c.isalnum() else "_" for c in user[:20])
+            output_file = f"{export_dir}/{safe_filename}.json"
+            with open(output_file, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+            print(f"\nJSON saved to {output_file}")
+            break  # End conversation after saving
+        except json.JSONDecodeError:
+            print("[Model did not return valid JSON. Try again.]\n")
+            continue
+
 
 __all__ = ["run_cli_chat"]

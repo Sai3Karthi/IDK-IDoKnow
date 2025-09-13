@@ -18,7 +18,7 @@ def choose_paths():
 
 def setup():
   
-    for retry in range(3):
+    for retry in range(10):
         try:
             r = requests.get(SERVER_URL+"config", timeout=1)
             config = r.json()
