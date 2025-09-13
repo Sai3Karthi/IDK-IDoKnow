@@ -128,13 +128,35 @@ def create_fallback_perspective(slot: Dict[str, Any]) -> Dict[str, Any]:
         slot: Original perspective slot (color, bias_x)
         
     Returns:
-        Fallback perspective object
+        Fallback perspective object with proper text based on bias position
     """
+    # Generate proper fallback text based on bias position and color
+    bias_x = slot["bias_x"]
+    color = slot["color"]
+    
+    # Create perspective text based on bias position
+    if bias_x < 0.2:  # Strong position A (red/orange)
+        if color == "red":
+            text = "This represents a clear violation of democratic principles and electoral integrity."
+        else:
+            text = "There are concerning patterns that warrant serious investigation by authorities."
+    elif bias_x < 0.4:  # Moderate position A (yellow)
+        text = "While allegations deserve attention, we should wait for comprehensive evidence before drawing conclusions."
+    elif bias_x < 0.6:  # Neutral/balanced (green)
+        text = "This situation requires careful analysis of all available evidence from multiple sources."
+    elif bias_x < 0.8:  # Moderate position B (blue)
+        text = "These claims may be part of routine political discourse rather than substantive violations."
+    else:  # Strong position B (indigo/violet)
+        if color == "violet":
+            text = "Such accusations are typical political rhetoric without substantial basis in fact."
+        else:
+            text = "This appears to be standard opposition criticism common in competitive elections."
+    
     return {
         "color": slot["color"],
         "bias_x": slot["bias_x"],
         "significance_y": round(0.5 + slot['bias_x'] * 0.3, 4),  # Varied fallback
-        "text": f"[FALLBACK] {slot['color']} {slot['bias_x']}",
+        "text": text,
     }
 
 

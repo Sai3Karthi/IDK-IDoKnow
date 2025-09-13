@@ -2,12 +2,14 @@
 Vertex AI Client Module
 
 Handles Vertex AI endpoint validation, client initialization, and model calls
-with rate limiting and retry logic.
+with rate limiting and retry logic. Uses config.json for model parameters.
 """
 
+import json
+import os
 import re
 import time
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple, List, Dict, Any
 from google import genai
 from google.genai import types
 
@@ -16,6 +18,38 @@ from google.genai import types
 ENDPOINT_REGEX = re.compile(
     r"^projects/(?P<project>[A-Za-z0-9_-]+)/locations/(?P<location>[a-z0-9-]+)/endpoints/(?P<endpoint>[0-9]+)$"
 )
+
+
+def load_config() -> Dict[str, Any]:
+    """Load configuration from config.json file."""
+    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.json')
+    try:
+        with open(config_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"[warn] Config file not found at {config_path}, using defaults")
+        return {
+            "model_config": {
+                "temperature": 0.6,
+                "top_p": 0.9,
+                "max_output_tokens": 8192,
+                "top_k": 40
+            },
+            "safety_settings": {
+                "HARM_CATEGORY_HARASSMENT": "BLOCK_NONE",
+                "HARM_CATEGORY_HATE_SPEECH": "BLOCK_NONE", 
+                "HARM_CATEGORY_SEXUALLY_EXPLICIT": "BLOCK_NONE",
+                "HARM_CATEGORY_DANGEROUS_CONTENT": "BLOCK_NONE"
+            },
+            "generation_config": {
+                "candidate_count": 1,
+                "stop_sequences": [],
+                "response_mime_type": "application/json"
+            }
+        }
+    except json.JSONDecodeError as e:
+        print(f"[error] Invalid JSON in config file: {e}")
+        raise
 
 
 def parse_endpoint_path(model: str) -> Optional[Tuple[str, str]]:
@@ -42,17 +76,17 @@ def call_model(
     client: genai.Client, 
     endpoint: str, 
     user_text: str, 
-    temperature: float = 0.4, 
+    temperature: Optional[float] = None, 
     delay_after: float = 2.0
 ) -> str:
     """
-    Call the model with retry logic and rate limiting.
+    Call the model with retry logic and rate limiting using config.json settings.
     
     Args:
         client: Initialized Vertex AI client
         endpoint: Vertex endpoint path
         user_text: Prompt text to send to model
-        temperature: Sampling temperature (0.0-1.0)
+        temperature: Sampling temperature (overrides config if provided)
         delay_after: Delay in seconds after successful call
         
     Returns:
@@ -61,22 +95,36 @@ def call_model(
     Raises:
         Exception: If all retries are exhausted or non-rate-limit errors occur
     """
+    # Load configuration
+    config_data = load_config()
+    model_config = config_data.get("model_config", {})
+    safety_config = config_data.get("safety_settings", {})
+    
+    # Use provided temperature or fall back to config
+    final_temperature = temperature if temperature is not None else model_config.get("temperature", 0.6)
+    
     try:
         part = types.Part.from_text(text=user_text)
     except TypeError:
         part = types.Part(text=user_text)
         
     contents = [types.Content(role="user", parts=[part])]
+    
+    # Build safety settings from config
+    safety_settings = []
+    for category, threshold in safety_config.items():
+        # Convert threshold values
+        threshold_value = "OFF" if threshold == "BLOCK_NONE" else threshold
+        safety_settings.append(
+            types.SafetySetting(category=category, threshold=threshold_value)
+        )
+    
     config = types.GenerateContentConfig(
-        temperature=temperature,
-        top_p=0.95,
-        max_output_tokens=32768,  # Increased for full batch generation
-        safety_settings=[
-            types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="OFF"),
-            types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="OFF"),
-            types.SafetySetting(category="HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold="OFF"),
-            types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="OFF"),
-        ],
+        temperature=final_temperature,
+        top_p=model_config.get("top_p", 0.9),
+        max_output_tokens=model_config.get("max_output_tokens", 8192),
+        top_k=model_config.get("top_k", 40),
+        safety_settings=safety_settings,
         thinking_config=types.ThinkingConfig(thinking_budget=0),
     )
     
