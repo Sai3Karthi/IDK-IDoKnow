@@ -15,5 +15,7 @@
     "candidate_count": 1,
     "stop_sequences": [],
     "response_mime_type": "application/json"
+  },
+
+    "perspective_count": 7
   }
-}

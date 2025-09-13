@@ -19,16 +19,18 @@ async def lifespan(app: FastAPI):
     # Import and run api_request
     import argparse
     
-    # Create arguments object with default values
+    # Load perspective_count from config.json
+    from modules.vertex_client import load_config
+    config = load_config()
+    perspective_count = config.get('perspective_count', 70)
     args = argparse.Namespace(
         input="input.json",
         output="output.json", 
         endpoint=None,
         model=None,
-        count=70,
+        count=perspective_count,
         temperature=0.6
     )
-    
     api_request.run_pipeline(args)
     yield
 

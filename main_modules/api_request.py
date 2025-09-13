@@ -49,8 +49,11 @@ def run_pipeline(args):
     # Load and validate input
     statement = load_input(args.input)
     
-    # Build perspective scaffold
-    scaffold = build_scaffold(args.count)
+    # Load config and get perspective_count
+    from modules.vertex_client import load_config
+    config = load_config()
+    count = getattr(args, 'count', None) or config.get('perspective_count', 70)
+    scaffold = build_scaffold(count)
     
     # Get endpoint and build client
     endpoint = args.endpoint or os.environ.get(VERTEX_ENDPOINT_ENV) or args.model

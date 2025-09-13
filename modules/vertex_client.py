@@ -25,7 +25,11 @@ def load_config() -> Dict[str, Any]:
     config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.json')
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
+            config = json.load(f)
+            # Ensure perspective_count is present and int
+            if 'perspective_count' in config:
+                config['perspective_count'] = int(config['perspective_count'])
+            return config
     except FileNotFoundError:
         print(f"[warn] Config file not found at {config_path}, using defaults")
         return {
