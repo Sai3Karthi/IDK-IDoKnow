@@ -23,6 +23,7 @@ import argparse
 import os
 import sys
 from typing import List, Dict, Any, Set
+import requests
 
 try:
     from dotenv import load_dotenv
@@ -156,6 +157,13 @@ def main():
     parser = build_arg_parser()
     args = parser.parse_args()
     code = run_pipeline(args)
+
+    # Notify server after pipeline completes
+    try:
+        requests.post("http://127.0.0.1:8000/api/pipeline_complete", json={"status": "done"})
+    except Exception as e:
+        print(f"Failed to notify server: {e}")
+
     sys.exit(code)
 
 
