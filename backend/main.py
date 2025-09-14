@@ -7,6 +7,7 @@ import sys
 import subprocess
 import threading
 import time
+import json
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 import requests
@@ -36,23 +37,23 @@ app = FastAPI(lifespan=lifespan)
 
 @app.post("/api/pipeline_complete")
 async def pipeline_complete(request: Request):
-    """Endpoint to handle pipeline completion and start KNN-assignment."""
-    def run_knn():
+    """Endpoint to handle pipeline completion and start clustering."""
+    def run_clustering():
         subprocess.run([
             sys.executable,
-            os.path.join(os.path.dirname(__file__), "modules", "KNN-assignment.py")
+            os.path.join(os.path.dirname(__file__), "modules", "TOP-N_K_MEANS-CLUSTERING.py")
         ])
-        # Notify server after KNN completes
+        # Notify server after clustering completes
         try:
-            requests.post("http://127.0.0.1:8000/api/knn_complete", json={"status": "knn_done"})
+            requests.post("http://127.0.0.1:8000/api/clustering_complete", json={"status": "clustering_done"})
         except Exception as e:
-            print(f"Failed to notify KNN completion: {e}")
-    threading.Thread(target=run_knn).start()
-    return {"status": "KNN started"}
+            print(f"Failed to notify clustering completion: {e}")
+    threading.Thread(target=run_clustering).start()
+    return {"status": "Clustering started"}
 
-@app.post("/api/knn_complete")
-async def knn_complete(request: Request):
-    """Endpoint to handle KNN completion and signal server shutdown."""
+@app.post("/api/clustering_complete")
+async def clustering_complete(request: Request):
+    """Endpoint to handle clustering completion and signal server shutdown."""
     server_shutdown_event.set()
     return {"status": "server will end"}
 
@@ -69,12 +70,12 @@ if __name__ == "__main__":
     server_thread.start()
 
     # Invoke api_request.py outside lifespan
+    # Note: No need to read config.json here, api_request will read it directly
     args = argparse.Namespace(
         input="input.json",
         output="output.json", 
         endpoint=None,
         model=None,
-        count=70,
         temperature=0.6
     )
     api_request.run_pipeline(args)

@@ -16,6 +16,5 @@
     "stop_sequences": [],
     "response_mime_type": "application/json"
   },
-
-    "perspective_count": 100
-  }
+  "perspective_count": 256
+}

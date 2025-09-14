@@ -1,68 +1,74 @@
 [
     {
         "color": "indigo",
-        "bias_x": 0.8551,
-        "significance_y": 0.6,
-        "text": "This is a clear indication that the opposition is not fit to govern and does not care about the welfare of the Indian people."
-    },
-    {
-        "color": "indigo",
-        "bias_x": 0.7826,
+        "bias_x": 0.7753,
         "significance_y": 0.9,
-        "text": "The Congress party's criticism of this operation is a betrayal of the nation's interests."
-    },
-    {
-        "color": "blue",
-        "bias_x": 0.5942,
-        "significance_y": 0.6,
-        "text": "The focus should be on supporting our border agents who are working under difficult circumstances."
-    },
-    {
-        "color": "violet",
-        "bias_x": 0.971,
-        "significance_y": 0.8,
-        "text": "This is a classic example of the opposition's anti-development and anti-progress agenda."
+        "text": "India's regional leadership is crucial for maintaining peace and prosperity."
     },
     {
         "color": "indigo",
-        "bias_x": 0.7536,
-        "significance_y": 0.7,
-        "text": "The opposition seems more concerned with scoring political points than with the safety of our citizens."
+        "bias_x": 0.8539,
+        "significance_y": 0.9,
+        "text": "India's foreign policy is guided by a pragmatic vision of regional security and prosperity."
+    },
+    {
+        "color": "blue",
+        "bias_x": 0.5843,
+        "significance_y": 0.8,
+        "text": "India has a right to be concerned about political instability in its immediate neighborhood."
+    },
+    {
+        "color": "blue",
+        "bias_x": 0.6292,
+        "significance_y": 0.8,
+        "text": "India's stability is intrinsically linked to the stability of its neighbors."
+    },
+    {
+        "color": "blue",
+        "bias_x": 0.6742,
+        "significance_y": 0.8,
+        "text": "India's security interests necessitate a close watch on Nepal's political developments."
+    },
+    {
+        "color": "blue",
+        "bias_x": 0.7191,
+        "significance_y": 0.8,
+        "text": "India must ensure its interests are protected in its neighborhood."
     },
     {
         "color": "indigo",
-        "bias_x": 0.7246,
+        "bias_x": 0.7303,
         "significance_y": 0.8,
-        "text": "The Congress party has always been weak on national security, and this criticism proves it."
+        "text": "India has a vested interest in ensuring stability and good governance in its neighborhood."
+    },
+    {
+        "color": "indigo",
+        "bias_x": 0.8202,
+        "significance_y": 0.8,
+        "text": "India's proactive engagement is essential for Nepal's future stability and development."
     },
     {
         "color": "violet",
-        "bias_x": 0.913,
-        "significance_y": 0.5,
-        "text": "This operation is essential for maintaining law and order and protecting our citizens."
-    },
-    {
-        "color": "blue",
-        "bias_x": 0.7101,
-        "significance_y": 0.6,
-        "text": "This operation is a necessary component of a strong and secure nation."
-    },
-    {
-        "color": "blue",
-        "bias_x": 0.5797,
+        "bias_x": 0.8764,
         "significance_y": 0.8,
-        "text": "The opposition's knee-jerk criticism of any national security measure is predictable and unhelpful."
+        "text": "India's strategic depth depends on the stability of its border regions, making Nepal's constitution crucial."
     },
     {
         "color": "violet",
-        "bias_x": 0.942,
+        "bias_x": 0.9438,
+        "significance_y": 0.8,
+        "text": "The stability of Nepal directly impacts India's internal security and demographic balance."
+    },
+    {
+        "color": "violet",
+        "bias_x": 0.9888,
+        "significance_y": 0.8,
+        "text": "India's national security is intrinsically tied to the political stability and orientation of Nepal."
+    },
+    {
+        "color": "green",
+        "bias_x": 0.573,
         "significance_y": 0.7,
-        "text": "This is a political stunt by a desperate party trying to stay relevant."
-    },
-    {
-        "color": "blue",
-        "bias_x": 0.6812,
-        "significance_y": 0.5,
-        "text": "This is not the time for political squabbling; it's the time for national unity."
+        "text": "India's experience in nation-building might inform its comments on Nepal's constitutional process."
     }
 ]

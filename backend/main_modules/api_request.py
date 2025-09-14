@@ -10,7 +10,8 @@ Required final JSON format:
 }
 
 Rules:
-    * Exactly N (default 70) perspectives.
+    * Number of perspectives (N) calculated based on significance score (s) from input.json:
+      N = ceiling(128 · (s^2.8) + 8) where s ∈ [0,1]
     * bias_x linearly spaced from 0 to 1 inclusive.
     * significance_y = 1 - bias_x (impact mapping).
     * Colors: 7 colors (red, orange, yellow, green, blue, indigo, violet) assigned in blocks as evenly as possible.
@@ -24,6 +25,7 @@ import os
 import sys
 from typing import List, Dict, Any, Set
 import requests
+import json
 
 try:
     from dotenv import load_dotenv
@@ -45,17 +47,26 @@ from modules.perspective_utils import (
 VERTEX_ENDPOINT_ENV = "VERTEX_ENDPOINT"
 
 
+def load_config():
+    """Load configuration from config.json."""
+    config_path = os.path.join(os.path.dirname(__file__), "..", "config.json")
+    with open(config_path, "r") as config_file:
+        return json.load(config_file)
+
+
 def run_pipeline(args):
     """Main pipeline for generating structured perspectives."""
     # Load and validate input
-    statement = load_input(args.input)
+    statement, significance = load_input(args.input)
     
-    # Load config and get perspective_count
-    from modules.vertex_client import load_config
-    config = load_config()
-    count = getattr(args, 'count', None) or config.get('perspective_count', 70)
-    scaffold = build_scaffold(count)
+    # Calculate perspective count based on the formula: 128 · (s^2.8) + 8{s≥0}{s≤1}
+    # The indicator functions {s≥0} and {s≤1} both equal 1 since we clamp significance to [0,1]
+    import math
+    perspective_count = int(math.ceil(128 * (significance ** 2.8) + 8))
+    print(f"[info] Significance score: {significance}, calculated perspective count: {perspective_count}")
     
+    scaffold = build_scaffold(perspective_count)
+            
     # Get endpoint and build client
     endpoint = args.endpoint or os.environ.get(VERTEX_ENDPOINT_ENV) or args.model
     if not endpoint:
@@ -147,7 +158,7 @@ def build_arg_parser():
     p.add_argument("--endpoint", help="Vertex endpoint path. Overrides VERTEX_ENDPOINT env")
     # Backward compatibility: allow --model but document deprecation.
     p.add_argument("--model", help="(Deprecated) Use --endpoint instead.")
-    p.add_argument("--count", type=int, default=70, help="Number of perspectives (default 70)")
+    # Note: --count is removed as perspective count is now only read from config.json
     p.add_argument("--temperature", type=float, default=0.6, help="Sampling temperature")
     return p
 

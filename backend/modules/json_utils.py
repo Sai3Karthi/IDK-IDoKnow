@@ -126,7 +126,7 @@ def write_output(path: str, data: Any) -> None:
     print(f"[info] Generated {perspective_count} perspectives → {path}")
 
 
-def load_input(path: str) -> str:
+def load_input(path: str) -> tuple:
     """
     Load and validate input JSON file.
     
@@ -134,7 +134,9 @@ def load_input(path: str) -> str:
         path: Path to input JSON file
         
     Returns:
-        The statement/topic string from the input
+        A tuple containing:
+          - The statement/topic string from the input
+          - The significance score (defaults to 0.7 if not provided)
         
     Raises:
         SystemExit: If input file is invalid or missing required fields
@@ -150,4 +152,12 @@ def load_input(path: str) -> str:
     if not statement:
         raise SystemExit("Input JSON must contain 'input' or 'topic' field with the statement.")
     
-    return statement
+    # Get significance score, with a default of 0.7 if not provided
+    significance = input_obj.get("significance_score", 0.7)
+    
+    # Validate significance score is between 0 and 1
+    if not (0 <= significance <= 1):
+        print(f"[warn] Significance score {significance} outside range [0,1], clamping to range.")
+        significance = max(0, min(significance, 1))
+    
+    return statement, significance

@@ -1,86 +1,74 @@
 [
     {
-        "color": "yellow",
-        "bias_x": 0.3768,
-        "significance_y": 0.6,
-        "text": "Understanding the operational details is crucial to evaluating the validity of the criticism."
-    },
-    {
-        "color": "red",
-        "bias_x": 0.0145,
-        "significance_y": 0.6,
-        "text": "The focus on 'operation' and 'security' masks the humanitarian crisis at our borders."
-    },
-    {
-        "color": "orange",
-        "bias_x": 0.2754,
-        "significance_y": 0.4,
-        "text": "Congress's criticism is a reminder that policy decisions must be grounded in evidence and ethical considerations."
-    },
-    {
-        "color": "orange",
-        "bias_x": 0.1449,
-        "significance_y": 0.8,
-        "text": "The lack of transparency surrounding Operation Sindoor is deeply concerning to civil liberties advocates."
-    },
-    {
-        "color": "red",
-        "bias_x": 0.1159,
-        "significance_y": 0.4,
-        "text": "The government is failing to uphold its responsibility to protect all people, including immigrants."
-    },
-    {
-        "color": "yellow",
-        "bias_x": 0.3478,
-        "significance_y": 0.9,
-        "text": "The long-term socio-economic impact of this operation needs careful consideration."
-    },
-    {
-        "color": "yellow",
-        "bias_x": 0.3188,
-        "significance_y": 0.7,
-        "text": "The media's framing of this operation will significantly shape public opinion."
-    },
-    {
-        "color": "orange",
-        "bias_x": 0.1594,
-        "significance_y": 0.6,
-        "text": "Congress has a duty to investigate claims of excessive force and mistreatment of individuals during this operation."
-    },
-    {
-        "color": "yellow",
-        "bias_x": 0.3333,
-        "significance_y": 0.5,
-        "text": "Congress has a right to scrutinize government operations, but the criticism should be constructive."
-    },
-    {
         "color": "red",
         "bias_x": 0.0,
         "significance_y": 0.8,
-        "text": "This criticism is a necessary stand against the militarization of our borders and the criminalization of migration."
-    },
-    {
-        "color": "red",
-        "bias_x": 0.1304,
-        "significance_y": 0.7,
-        "text": "This is a critical moment for Congress to stand up for its values and condemn this brutal policy."
-    },
-    {
-        "color": "yellow",
-        "bias_x": 0.4203,
-        "significance_y": 0.8,
-        "text": "The international community will be watching how this situation unfolds."
-    },
-    {
-        "color": "red",
-        "bias_x": 0.0435,
-        "significance_y": 0.5,
-        "text": "The resources spent on operations like this could be better used for social programs and immigrant integration."
+        "text": "India's interference in Nepal's internal affairs is a blatant violation of international law."
     },
     {
         "color": "orange",
-        "bias_x": 0.1739,
-        "significance_y": 0.5,
-        "text": "This operation raises serious questions about the balance between national security and individual rights."
+        "bias_x": 0.1461,
+        "significance_y": 0.8,
+        "text": "India's statements could be perceived as a warning to other regional powers."
+    },
+    {
+        "color": "yellow",
+        "bias_x": 0.2921,
+        "significance_y": 0.8,
+        "text": "The statement likely reflects a concern for regional stability and the welfare of minority groups."
+    },
+    {
+        "color": "red",
+        "bias_x": 0.0225,
+        "significance_y": 0.7,
+        "text": "India's historical actions have always been to dominate its neighbors, and this is no different."
+    },
+    {
+        "color": "red",
+        "bias_x": 0.0562,
+        "significance_y": 0.7,
+        "text": "This is a textbook example of neo-colonialism from India."
+    },
+    {
+        "color": "red",
+        "bias_x": 0.0899,
+        "significance_y": 0.7,
+        "text": "India's rhetoric is a threat to peace and stability in the region."
+    },
+    {
+        "color": "red",
+        "bias_x": 0.1236,
+        "significance_y": 0.7,
+        "text": "India's actions undermine the principles of self-determination."
+    },
+    {
+        "color": "orange",
+        "bias_x": 0.1685,
+        "significance_y": 0.7,
+        "text": "The international community is watching closely how India handles this sensitive situation."
+    },
+    {
+        "color": "orange",
+        "bias_x": 0.2022,
+        "significance_y": 0.7,
+        "text": "Nepal's right to self-determination must be respected by all its neighbors."
+    },
+    {
+        "color": "orange",
+        "bias_x": 0.236,
+        "significance_y": 0.7,
+        "text": "The statement seems to imply a paternalistic view of Nepal's development."
+    },
+    {
+        "color": "orange",
+        "bias_x": 0.2697,
+        "significance_y": 0.7,
+        "text": "This incident could inspire other smaller nations to be wary of Indian influence."
+    },
+    {
+        "color": "yellow",
+        "bias_x": 0.3258,
+        "significance_y": 0.7,
+        "text": "The statement could be interpreted as a warning against political instability that might spill over borders."
     }
 ]

@@ -1,20 +1,26 @@
 [
     {
         "color": "green",
-        "bias_x": 0.4928,
+        "bias_x": 0.4382,
+        "significance_y": 0.8,
+        "text": "India's engagement with its neighbors is crucial for regional stability and prosperity."
+    },
+    {
+        "color": "green",
+        "bias_x": 0.4719,
         "significance_y": 0.7,
-        "text": "It's important to understand the specific details of the operation before forming a final judgment."
+        "text": "Such statements can sometimes be misconstrued due to language and cultural differences."
     },
     {
         "color": "green",
-        "bias_x": 0.5072,
-        "significance_y": 0.4,
-        "text": "The opposition's criticism seems to be more about scoring political points than offering genuine solutions."
+        "bias_x": 0.5056,
+        "significance_y": 0.7,
+        "text": "India's long history of development assistance to Nepal gives it a certain standing to comment."
     },
     {
         "color": "green",
-        "bias_x": 0.4783,
-        "significance_y": 0.5,
-        "text": "The effectiveness of the operation will ultimately determine whether the criticism was justified."
+        "bias_x": 0.5393,
+        "significance_y": 0.7,
+        "text": "It's possible the statement was intended to reassure certain groups in Nepal that India is watching."
     }
 ]
