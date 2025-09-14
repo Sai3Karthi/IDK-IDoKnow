@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
 // UI components
 import { ExpandablePerspectiveCards } from './cards/ExpandablePerspectiveCards';
 import { Button } from '../ui/button';
+import { StreamingBiasSignificanceMotionChart } from './StreamingBiasSignificanceMotionChart';
 
 export default function Component3() {
   const [stage, setStage] = useState('idle'); // idle|queued|module1|module2|module3|done|error
@@ -11,6 +12,10 @@ export default function Component3() {
   const pollRef = useRef(null);
   const [perspectivesByColor, setPerspectivesByColor] = useState({});
   const wsRef = useRef(null);
+  const [showWhyModal, setShowWhyModal] = useState(false);
+  const [selectedPerspectives, setSelectedPerspectives] = useState([]);
+  const [cacheAvailable, setCacheAvailable] = useState(false);
+  const cacheSnapshotRef = useRef(null);
 
   // Start processing (POST)
   const startPipeline = async () => {
@@ -235,7 +240,6 @@ export default function Component3() {
     }
   };
 
-
   // Auto reconnect WebSocket if it closes unexpectedly
   useEffect(() => {
     const reconnectWebSocket = () => {
@@ -325,8 +329,64 @@ export default function Component3() {
     };
   }, []);
 
+  useEffect(() => {
+    // Probe cache once on mount
+    (async () => {
+      try {
+        const orchestratorPort = 8001;
+        const res = await fetch(`http://localhost:${orchestratorPort}/ws/cache`);
+        if (res.ok) {
+          const data = await res.json();
+            // Determine if cache has at least one non-empty array
+            const hasAny = Object.values(data).some(v => Array.isArray(v) && v.length);
+            if (hasAny) {
+              cacheSnapshotRef.current = data;
+              setCacheAvailable(true);
+            }
+        }
+      } catch (e) {
+        // Silent fail; cache just not available
+      }
+    })();
+  }, []);
+
+  const loadCache = () => {
+    if (!cacheSnapshotRef.current) return;
+    const byColor = {};
+    Object.entries(cacheSnapshotRef.current).forEach(([color, arr]) => {
+      if (Array.isArray(arr) && arr.length) byColor[color] = arr;
+    });
+    setPerspectivesByColor(byColor);
+    setStage('module3'); // simulate near-complete stage for UI context
+    setProgress(95);
+  };
+
   return (
     <div className="p-8 border-2 border-border rounded-xl my-8 bg-card/40 backdrop-blur-sm text-foreground shadow-sm space-y-6">
+      {/* Why Perspectives Modal (portal-like simple absolute overlay) */}
+      {showWhyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" onClick={() => setShowWhyModal(false)} />
+          <div className="relative z-10 w-full max-w-lg rounded-xl border border-border bg-card shadow-2xl p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <h4 className="text-lg font-semibold tracking-tight">Why Generate Perspectives?</h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              We stream political perspectives grouped by color as an accessible way to surface patterns in rhetoric, framing, and ideological bias while the analysis pipeline is still running. Each color cluster corresponds to a semantic grouping or polarity segment discovered during processing. Showing them incrementally helps you:
+            </p>
+            <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+              <li>Observe emerging bias distributions without waiting for final output</li>
+              <li>Compare tone, framing, and emphasis across clusters</li>
+              <li>Validate data ingestion and model responsiveness in real time</li>
+              <li>Spot anomalies (e.g., missing clusters or extreme outliers)</li>
+            </ul>
+            <p className="text-sm text-muted-foreground">
+              These perspectives are raw model-generated snippets that later feed aggregation, normalization, and visualization steps (bias vs significance mapping, clustering, and contrast synthesis). Final reports refine wording and remove redundancies.
+            </p>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" size="sm" onClick={() => setShowWhyModal(false)}>Close</Button>
+            </div>
+          </div>
+        </div>
+      )}
       <h2 className="text-xl font-semibold tracking-tight">Political Perspective Analysis Pipeline</h2>
       
       {/* Error State */}
@@ -341,7 +401,12 @@ export default function Component3() {
       {stage === 'idle' && (
         <div className="p-5 text-center space-y-4">
           <p className="text-sm text-muted-foreground">Pipeline idle. Click to start analysis.</p>
+          <div className="flex items-center justify-center gap-3 flex-wrap">
             <Button onClick={startPipeline}>Run Pipeline</Button>
+            {cacheAvailable && (
+              <Button variant="secondary" onClick={loadCache}>Cache Found • Load</Button>
+            )}
+          </div>
         </div>
       )}
       
@@ -365,9 +430,27 @@ export default function Component3() {
       {/* Perspectives Streaming Display */}
       {Object.keys(perspectivesByColor).length > 0 && (
         <div className="mt-4 p-6 rounded-xl bg-card/60 border border-border/60 shadow-inner space-y-4">
-          <h3 className="text-lg font-semibold tracking-tight">Streaming Perspectives by Color</h3>
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <h3 className="text-lg font-semibold tracking-tight flex items-center gap-3">
+              <span>Streaming Perspectives by Color</span>
+              <Button
+                type="button"
+                variant="outline"
+                size="xs"
+                className="h-6 px-2 text-[10px] uppercase tracking-wide font-medium"
+                onClick={() => setShowWhyModal(true)}
+              >See why we generate perspectives</Button>
+            </h3>
+          </div>
           <div className="py-2">
             <ExpandablePerspectiveCards perspectivesByColor={perspectivesByColor} />
+          </div>
+          <div className="pt-4 border-t border-border/40">
+            <StreamingBiasSignificanceMotionChart 
+              perspectivesByColor={perspectivesByColor} 
+              height={340}
+              onSelectionChange={setSelectedPerspectives}
+            />
           </div>
         </div>
       )}
