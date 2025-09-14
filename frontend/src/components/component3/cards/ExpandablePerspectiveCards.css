@@ -76,11 +76,45 @@
 .epc-hero { height:150px; width:100%; border-radius:1.05rem 1.05rem 0 0; }
 .epc-dialog-sheet .epc-hero { height:100px; }
 .epc-hero { position:relative; }
-.epc-hero-overlay { position:absolute; inset:0; display:flex; align-items:flex-end; padding:.55rem .85rem; background:linear-gradient(to top,rgba(0,0,0,.55),rgba(0,0,0,0)); }
-.epc-metrics { display:flex; gap:1.2rem; font-size:.6rem; letter-spacing:.5px; font-weight:500; align-items:flex-end; }
-.epc-metric { display:flex; flex-direction:column; gap:.2rem; }
-.epc-metric label { font-size:.55rem; text-transform:uppercase; opacity:.7; font-weight:600; letter-spacing:1px; }
-.epc-metric strong { font-size:clamp(1.25rem, 2vw + .3rem, 2rem); font-weight:700; line-height:1.05; letter-spacing:.5px; }
+.epc-hero-overlay { 
+  position:absolute; inset:0; 
+  display:flex; 
+  align-items:center; 
+  justify-content:center; 
+  padding:0.75rem 1rem; 
+  text-align:center; 
+  background:linear-gradient(to top,rgba(0,0,0,.55),rgba(0,0,0,0)); 
+}
+.epc-metrics { 
+  display:flex; 
+  gap:1.2rem; 
+  font-size:.6rem; 
+  letter-spacing:.5px; 
+  font-weight:500; 
+  align-items:center; 
+  justify-content:center; 
+  flex-wrap:wrap; 
+}
+.epc-metric { 
+  display:flex; 
+  flex-direction:column; 
+  gap:.2rem; 
+  align-items:center; 
+  text-align:center; 
+}
+.epc-metric label { 
+  font-size:.7rem; 
+  text-transform:uppercase; 
+  opacity:.7; 
+  font-weight:600; 
+  letter-spacing:1.5px; 
+}
+.epc-metric strong { 
+  font-size:clamp(2.4rem, 4vw + .75rem, 3.6rem); 
+  font-weight:700; 
+  line-height:1.05; 
+  letter-spacing:.5px; 
+}
 .epc-metrics-fallback .epc-metric strong { opacity:.85; }
 .epc-close { position:absolute; top:.6rem; right:.6rem; background:hsl(var(--background)/0.85); color:hsl(var(--foreground)); border:1px solid hsl(var(--border)); border-radius:999px; padding:.38rem; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,.25); backdrop-filter:blur(6px); }
 .epc-close:hover { background:hsl(var(--background)/0.9); }
