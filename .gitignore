@@ -44,3 +44,39 @@ output.json
 raw_model_output.txt
 final_output/
 temp/
+
+# Frontend (React)
+frontend/node_modules/
+frontend/build/
+frontend/.parcel-cache/
+frontend/.next/
+frontend/dist/
+frontend/coverage/
+
+# Logs
+*.log
+logs/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Generated images & analysis artifacts (keep if you want them versioned)
+module3/backend/perspective_analysis.png
+module3/backend/output.json
+module3/backend/input.json
+
+# Cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage.xml
+
+# Environment exports
+*.env.backup
+*.env.example.local

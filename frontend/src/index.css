@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body, html {
   margin: 0;
   padding: 0;
@@ -10,6 +14,75 @@ body, html {
   background-color: #000000;
   color: #ffffff;
   overflow-x: hidden;
+}
+
+/* shadcn/ui design tokens */
+@layer base {
+  :root {
+    /* Monochrome neutral scale (no blue tint) */
+    --background: 0 0% 0%; /* pure black */
+    --foreground: 0 0% 100%; /* pure white */
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 100%; /* white as accent against black */
+    --primary-foreground: 0 0% 10%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 0% 18%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 72% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 70%;
+    --radius: 0.5rem;
+  }
+  .dark { /* same for dark mode since we're fixed black theme */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 0% 18%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 72% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 70%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
+}
+
+@layer utilities {
+  .bg-grid-small-dark {
+    background-size: 20px 20px;
+    background-image: linear-gradient(to right, hsl(var(--border)/0.2) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border)/0.2) 1px, transparent 1px);
+  }
+  /* Ripple cell animation from registry */
+  @keyframes cell-ripple {
+    0% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.4; }
+  }
+  .animate-cell-ripple { animation: cell-ripple var(--duration,200ms) ease-out var(--delay,0ms) 1; }
 }
 
 code {

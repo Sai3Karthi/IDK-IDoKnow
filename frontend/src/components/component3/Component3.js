@@ -1,4 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
+// UI components
+import { ExpandablePerspectiveCards } from './cards/ExpandablePerspectiveCards';
+import { Button } from '../ui/button';
 
 export default function Component3() {
   const [stage, setStage] = useState('idle'); // idle|queued|module1|module2|module3|done|error
@@ -323,86 +326,49 @@ export default function Component3() {
   }, []);
 
   return (
-    <div style={{ 
-      padding: '2rem', 
-      border: '2px solid #444', 
-      borderRadius: '12px', 
-      margin: '2rem 0', 
-      background: '#111',
-      color: '#eee'
-    }}>
-      <h2>Political Perspective Analysis Pipeline</h2>
+    <div className="p-8 border-2 border-border rounded-xl my-8 bg-card/40 backdrop-blur-sm text-foreground shadow-sm space-y-6">
+      <h2 className="text-xl font-semibold tracking-tight">Political Perspective Analysis Pipeline</h2>
       
       {/* Error State */}
       {stage === 'error' && (
-        <div style={{ padding: '20px', textAlign: 'center', color: '#ff8888' }}>
-          <p>Error: {error}</p>
-          <button onClick={startPipeline} style={{ 
-            padding: '10px 20px', 
-            background: '#222', 
-            color: '#eee', 
-            border: '1px solid #555', 
-            borderRadius: '5px', 
-            cursor: 'pointer' 
-          }}>
-            Retry
-          </button>
+        <div className="p-5 text-center space-y-4 text-destructive">
+          <p className="text-sm">Error: {error}</p>
+          <Button variant="outline" onClick={startPipeline}>Retry</Button>
         </div>
       )}
       
       {/* Idle State */}
       {stage === 'idle' && (
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-          <p>Pipeline idle. Click to start analysis.</p>
-          <button onClick={startPipeline} style={{ 
-            padding: '10px 20px', 
-            background: '#222', 
-            color: '#eee', 
-            border: '1px solid #555', 
-            borderRadius: '5px', 
-            cursor: 'pointer' 
-          }}>
-            Run Pipeline
-          </button>
+        <div className="p-5 text-center space-y-4">
+          <p className="text-sm text-muted-foreground">Pipeline idle. Click to start analysis.</p>
+            <Button onClick={startPipeline}>Run Pipeline</Button>
         </div>
       )}
       
       {/* Processing States */}
       {['queued', 'module1', 'module2', 'module3'].includes(stage) && (
-        <div style={{ padding: '20px' }}>
-          <p>Stage: {stage}</p>
-          <p>Progress: {progress}%</p>
-          <div style={{ 
-            width: '100%', 
-            height: '10px', 
-            background: '#333', 
-            borderRadius: '5px',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              width: `${progress}%`,
-              height: '100%',
-              background: '#4CAF50',
-              transition: 'width 0.3s ease'
-            }}></div>
+        <div className="p-5 space-y-2">
+          <p className="text-sm font-medium flex items-center gap-2">
+            <span className="inline-flex h-2 w-2 rounded-full bg-primary animate-pulse" />
+            Stage: <span className="font-semibold capitalize">{stage}</span>
+          </p>
+          <p className="text-xs text-muted-foreground">Progress: {progress}%</p>
+          <div className="w-full h-2 bg-muted/40 rounded-md overflow-hidden">
+            <div
+              className="h-full bg-primary transition-[width] duration-300"
+              style={{ width: `${progress}%` }}
+            />
           </div>
         </div>
       )}
       
       {/* Perspectives Streaming Display */}
       {Object.keys(perspectivesByColor).length > 0 && (
-        <div style={{ padding: '20px', marginTop: '20px', background: '#222', borderRadius: '8px' }}>
-          <h3>Streaming Perspectives by Color</h3>
-          {Object.entries(perspectivesByColor).map(([color, perspectives]) => (
-            <div key={color} style={{ marginBottom: '16px', borderLeft: `6px solid ${color}`, paddingLeft: '12px' }}>
-              <h4 style={{ textTransform: 'capitalize', color }}>{color}</h4>
-              <ul>
-                {perspectives.map((p, idx) => (
-                  <li key={idx} style={{ color: '#eee', marginBottom: '6px' }}>{p.text}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
+        <div className="mt-4 p-6 rounded-xl bg-card/60 border border-border/60 shadow-inner space-y-4">
+          <h3 className="text-lg font-semibold tracking-tight">Streaming Perspectives by Color</h3>
+          <div className="py-2">
+            <ExpandablePerspectiveCards perspectivesByColor={perspectivesByColor} />
+          </div>
         </div>
       )}
     </div>
