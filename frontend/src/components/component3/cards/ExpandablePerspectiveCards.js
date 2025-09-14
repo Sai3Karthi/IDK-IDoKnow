@@ -16,6 +16,7 @@ export function ExpandablePerspectiveCards({ perspectivesByColor }) {
   const [active, setActive] = useState(null); // {color, items}
   const [hovered, setHovered] = useState(null); // perspective object
   const dialogRef = useRef(null);
+  const scrollRef = useRef(null); // scroll container for auto-scroll
   const id = useId();
 
   // Memoize cards to avoid re-renders when unrelated colors stream in
@@ -50,6 +51,20 @@ export function ExpandablePerspectiveCards({ perspectivesByColor }) {
       document.body.style.overflow = originalOverflow;
     };
   }, [active, close]);
+
+  // Auto-scroll: when active card's item count increases, scroll to bottom if user is already near bottom
+  const prevCountRef = useRef(0);
+  useEffect(() => {
+    if (!active || !scrollRef.current) return;
+    const currentCount = active.items.length;
+    const el = scrollRef.current;
+    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 32; // 32px tolerance
+    if (currentCount > prevCountRef.current && atBottom) {
+      // Smooth scroll to bottom for new content visibility
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    }
+    prevCountRef.current = currentCount;
+  }, [active, active?.items.length]);
 
   return (
     <div className="epc-root">
@@ -100,6 +115,7 @@ export function ExpandablePerspectiveCards({ perspectivesByColor }) {
                 >{active.count} perspective{active.count !== 1 && 's'}</motion.p>
                 <motion.div
                   className="epc-scroll"
+                  ref={scrollRef}
                   initial="hidden"
                   animate="visible"
                   variants={{

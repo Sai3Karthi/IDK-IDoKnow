@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
 import { ExpandablePerspectiveCards } from './cards/ExpandablePerspectiveCards';
 import { Button } from '../ui/button';
 import { StreamingBiasSignificanceMotionChart } from './StreamingBiasSignificanceMotionChart';
+import { TextGenerateEffect } from '../ui/text-generate-effect';
 
 export default function Component3() {
   const [stage, setStage] = useState('idle'); // idle|queued|module1|module2|module3|done|error
@@ -16,6 +17,10 @@ export default function Component3() {
   const [selectedPerspectives, setSelectedPerspectives] = useState([]);
   const [cacheAvailable, setCacheAvailable] = useState(false);
   const cacheSnapshotRef = useRef(null);
+  const [showChart, setShowChart] = useState(false); // defer chart mount
+  const [revealedColors, setRevealedColors] = useState([]); // progressive color reveal order
+  const cardsContainerRef = useRef(null);
+  const chartAnchorRef = useRef(null); // anchor spot to scroll before chart appears
 
   // Start processing (POST)
   const startPipeline = async () => {
@@ -26,6 +31,12 @@ export default function Component3() {
     setProgress(0);
     setStage('queued');
     setPerspectivesByColor({});
+    // Clear any previously loaded cache snapshot & remove cache availability so UI doesn't offer stale load
+    cacheSnapshotRef.current = null;
+    setCacheAvailable(false);
+    setSelectedPerspectives([]);
+  setShowChart(false);
+  setRevealedColors([]);
 
     // Open WebSocket connection to the orchestrator
     if (wsRef.current) {
@@ -76,6 +87,8 @@ export default function Component3() {
               ...prev,
               [data.color]: data.perspectives
             }));
+            // Auto-reveal: ensure color appended to reveal sequence if chart already mounted
+            setRevealedColors(rc => rc.includes(data.color) ? rc : [...rc, data.color]);
           }
           // Handle ping messages
           else if (data.type === "ping") {
@@ -350,6 +363,91 @@ export default function Component3() {
     })();
   }, []);
 
+  // Auto-scroll once first perspectives arrive: first ensure cards visible, then scroll near future chart anchor just before mount
+  useEffect(() => {
+    const colorKeys = Object.keys(perspectivesByColor);
+    if (!showChart && colorKeys.length > 0) {
+      // Step 1: ensure cards are in view
+      if (cardsContainerRef.current) {
+        try { cardsContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch {}
+      }
+      // Step 2: shortly after, pre-scroll to chart anchor (even though chart not yet mounted)
+      const toAnchor = setTimeout(() => {
+        if (chartAnchorRef.current) {
+          try { chartAnchorRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch {}
+        }
+      }, 350);
+      // Step 3: mount chart after a bit more delay
+      const t = setTimeout(() => setShowChart(true), 900);
+      return () => clearTimeout(t);
+    }
+  }, [perspectivesByColor, showChart]);
+
+  // Fallback: after chart mounts, verify it is in viewport; if not, scroll again
+  useEffect(() => {
+    if (showChart) {
+      const chk = setTimeout(() => {
+        const el = chartAnchorRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const vh = window.innerHeight || 0;
+        if (rect.top < 0 || rect.bottom > vh) {
+          try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch {}
+        }
+      }, 150);
+      return () => clearTimeout(chk);
+    }
+  }, [showChart]);
+
+  // Progressive color reveal timing: once chart visible, reveal next unseen color every 500ms
+  useEffect(() => {
+    if (!showChart) return;
+    const allColors = Object.keys(perspectivesByColor);
+    if (allColors.length === 0) return;
+    if (revealedColors.length >= allColors.length) return;
+    const next = allColors.filter(c => !revealedColors.includes(c))[0];
+    if (!next) return;
+    const t = setTimeout(() => {
+      setRevealedColors(rc => rc.includes(next) ? rc : [...rc, next]);
+    }, 500);
+    return () => clearTimeout(t);
+  }, [showChart, perspectivesByColor, revealedColors]);
+
+  // Build filtered perspectives object for chart (only revealed colors)
+  const chartPerspectives = React.useMemo(() => {
+    if (!showChart) return {};
+    const obj = {};
+    revealedColors.forEach(c => { if (perspectivesByColor[c]) obj[c] = perspectivesByColor[c]; });
+    return obj;
+  }, [showChart, revealedColors, perspectivesByColor]);
+
+  // Total perspectives generated (all colors, not just revealed subset)
+  const totalPerspectives = React.useMemo(() => {
+    return Object.values(perspectivesByColor).reduce((acc, arr) => acc + (Array.isArray(arr) ? arr.length : 0), 0);
+  }, [perspectivesByColor]);
+
+  // Attempt to read an input significance score from results (naming fallback) if backend supplies it
+  const inputSignificance = results?.input_significance ?? results?.significance ?? null;
+
+  // Build significance → perspective count explanation (or inverse derivation if s not provided)
+  const significanceExplanation = React.useMemo(() => {
+    if (!totalPerspectives) return null;
+    const N = totalPerspectives;
+    // If significance available, forward compute; else derive approximate s from N = ceil(128*s^{2.8}+8)
+    let s;
+    let derived = false;
+    if (typeof inputSignificance === 'number' && !Number.isNaN(inputSignificance)) {
+      s = Math.min(1, Math.max(0, inputSignificance));
+    } else {
+      // Invert (ignore ceil for approximation): s = ((N - 8)/128)^{1/2.8}
+      s = Math.pow(Math.max(0, (N - 8)) / 128, 1 / 2.8);
+      derived = true;
+    }
+    const raw = 128 * Math.pow(s, 2.8) + 8;
+    const forward = Math.ceil(raw);
+    return { N, s, raw, forward, derived };
+  }, [totalPerspectives, inputSignificance]);
+
   const loadCache = () => {
     if (!cacheSnapshotRef.current) return;
     const byColor = {};
@@ -381,6 +479,41 @@ export default function Component3() {
             <p className="text-sm text-muted-foreground">
               These perspectives are raw model-generated snippets that later feed aggregation, normalization, and visualization steps (bias vs significance mapping, clustering, and contrast synthesis). Final reports refine wording and remove redundancies.
             </p>
+            <div className="border border-border/50 rounded-md p-3 bg-muted/10 space-y-3">
+              <h5 className="text-xs font-semibold tracking-wide uppercase text-foreground/80">How many perspectives are generated?</h5>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                The total perspective count <span className="font-mono">N</span> is a smooth, significance–sensitive function of the input's importance score <span className="font-mono">s \u2208 [0,1]</span>:
+              </p>
+              <pre className="text-[11px] whitespace-pre-wrap bg-background/60 rounded px-2 py-1 border border-border/40 overflow-x-auto"><code>N = ceil( 128 * s^{2.8} + 8 )</code></pre>
+              <p className="text-xs text-muted-foreground">
+                This curve sharply increases output density for highly significant inputs while capping noise for low-signal statements. The exponent <span className="font-mono">2.8</span> creates a sub‑linear ramp early, then accelerates near the top end.
+              </p>
+              <h5 className="text-xs font-semibold tracking-wide uppercase text-foreground/80 pt-1">Color scaffolding & streaming</h5>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                We first allocate a scaffold of <span className="font-mono">N</span> slots distributed across 7 spectral color groups (red → violet) in bias order. Each group is requested independently; as soon as a group returns, its validated perspectives are streamed to the UI.
+              </p>
+              <h5 className="text-xs font-semibold tracking-wide uppercase text-foreground/80 pt-1">Adaptive top-N stratification</h5>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                After raw generation, a stratified reducer (see <span className="font-mono">TOP-N_K_MEANS-CLUSTERING.py</span>) partitions perspectives into Leftist / Common / Rightist bands using bias thresholds and then:
+              </p>
+              <ol className="list-decimal pl-5 text-xs text-muted-foreground space-y-1">
+                <li>Computes a target reduced size <span className="font-mono">k</span> via piecewise ranges.</li>
+                <li>Proportionally allocates slots to each ideological band.</li>
+                <li>Rounds & rebalances to ensure \u2211 slots = <span className="font-mono">k</span>.</li>
+                <li>Selects highest-significance entries per band (top-N by <span className="font-mono">significance_y</span>).</li>
+              </ol>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Pseudo-form: <code className="font-mono">slots_band = round( (|band| / N) * k )</code> with iterative balancing until total equals <span className="font-mono">k</span>.
+              </p>
+              <h5 className="text-xs font-semibold tracking-wide uppercase text-foreground/80 pt-1">Why k-means mention?</h5>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                A downstream (optional) clustering step can further merge semantically redundant perspectives. Its current script label references k-means, but active logic here performs stratified proportional top-N selection rather than iterative centroid optimization. The naming is preserved for future expansion to true embedding-based clustering.
+              </p>
+              <h5 className="text-xs font-semibold tracking-wide uppercase text-foreground/80 pt-1">Bias & significance mapping</h5>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Each perspective carries <span className="font-mono">bias_x</span> (0→1 continuum) and <span className="font-mono">significance_y</span>. The live scatter animates axes first, then reveals points so you perceive structural balance before density.
+              </p>
+            </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="outline" size="sm" onClick={() => setShowWhyModal(false)}>Close</Button>
             </div>
@@ -429,7 +562,7 @@ export default function Component3() {
       
       {/* Perspectives Streaming Display */}
       {Object.keys(perspectivesByColor).length > 0 && (
-        <div className="mt-4 p-6 rounded-xl bg-card/60 border border-border/60 shadow-inner space-y-4">
+        <div ref={cardsContainerRef} className="mt-4 p-6 rounded-xl bg-card/60 border border-border/60 shadow-inner space-y-4">
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <h3 className="text-lg font-semibold tracking-tight flex items-center gap-3">
               <span>Streaming Perspectives by Color</span>
@@ -445,13 +578,38 @@ export default function Component3() {
           <div className="py-2">
             <ExpandablePerspectiveCards perspectivesByColor={perspectivesByColor} />
           </div>
-          <div className="pt-4 border-t border-border/40">
-            <StreamingBiasSignificanceMotionChart 
-              perspectivesByColor={perspectivesByColor} 
-              height={340}
-              onSelectionChange={setSelectedPerspectives}
-            />
+          {/* Animated label retained even after chart mounts */}
+          <div className="flex justify-center pt-1">
+            <TextGenerateEffect words="graph" duration={0.6} className="text-primary/90" />
           </div>
+          <div ref={chartAnchorRef} />
+          {showChart && (
+            <div className="pt-4 border-t border-border/40">
+              <StreamingBiasSignificanceMotionChart
+                perspectivesByColor={chartPerspectives}
+                height={340}
+                onSelectionChange={setSelectedPerspectives}
+              />
+              {significanceExplanation && (
+                <div className="mt-2 text-[10px] text-muted-foreground/80 leading-relaxed font-mono space-y-0.5">
+                  <div>Formula: N = ceil(128 * s^{2.8} + 8)</div>
+                  {significanceExplanation.derived ? (
+                    <div>
+                      Given N = {significanceExplanation.N}, inferred s ≈ {significanceExplanation.s.toFixed(3)} → ceil(128 * {significanceExplanation.s.toFixed(3)}^{2.8} + 8) = {significanceExplanation.forward}
+                    </div>
+                  ) : (
+                    <div>
+                      s = {significanceExplanation.s.toFixed(3)} → 128 * s^{2.8} + 8 = {significanceExplanation.raw.toFixed(2)} → N = ceil({significanceExplanation.raw.toFixed(2)}) = {significanceExplanation.forward}
+                    </div>
+                  )}
+                  <div>Total generated perspectives: {significanceExplanation.N}</div>
+                  {significanceExplanation.forward !== significanceExplanation.N && (
+                    <div className="text-[9px] opacity-70">(Note: runtime curation or filtering adjusted final count)</div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

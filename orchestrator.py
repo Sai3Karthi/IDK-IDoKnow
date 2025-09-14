@@ -150,6 +150,11 @@ def run_module3():
 def start_run(data: dict, background: BackgroundTasks):
     if STATE["stage"] in ("module3",):
         return JSONResponse({"error": "pipeline already running"}, status_code=409)
+    # Clear any previously cached perspectives when initiating a new run
+    global perspective_cache
+    if perspective_cache:
+        print("Clearing existing perspective cache for new run")
+    perspective_cache = {}
     _set(stage="queued", progress=0, error=None)
     background.add_task(run_module3)
     return {"status": "started"}

@@ -49,6 +49,13 @@ export function StreamingBiasSignificanceMotionChart({
   const svgRef = useRef(null);
   const pointerDownRef = useRef(null);
   const prevIdsRef = useRef(new Set());
+  const [readyForPoints, setReadyForPoints] = useState(false); // delay point appearance
+
+  // Delay points to let users watch axis build: axis duration ~2.2s + tick fade => show points after 1.4s
+  useEffect(() => {
+    const t = setTimeout(() => setReadyForPoints(true), 1400); // adjustable
+    return () => clearTimeout(t);
+  }, []);
 
   // Resize observer for responsive width
   useEffect(() => {
@@ -117,7 +124,8 @@ export function StreamingBiasSignificanceMotionChart({
   const xTicks = genTicks(xMin, xMax, 6);
   const yTicks = genTicks(yMin, yMax, 6);
 
-  const axisAnim = (delay = 0) => animateAxis ? { initial: { pathLength: 0 }, animate: { pathLength: 1, transition: { duration: 1.2, delay, ease: 'easeInOut' } } } : {};
+  // Slower axis animation for more pronounced build
+  const axisAnim = (delay = 0) => animateAxis ? { initial: { pathLength: 0 }, animate: { pathLength: 1, transition: { duration: 2.2, delay, ease: 'easeInOut' } } } : {};
 
   // LASSO HANDLERS
   const toLocal = (clientX, clientY) => {
@@ -219,7 +227,7 @@ export function StreamingBiasSignificanceMotionChart({
           {xTicks.map((t, i) => {
             const x = xScale(t);
             return (
-              <motion.g key={`xt-${t}`} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .3 + i * .05 }}>
+              <motion.g key={`xt-${t}`} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .55 + i * .07 }}>
                 <line x1={x} x2={x} y1={margin.top + innerH} y2={margin.top + innerH + 6} stroke="hsl(var(--border)/0.7)" />
                 <text x={x} y={margin.top + innerH + 18} textAnchor="middle" fontSize={11} fill="hsl(var(--foreground)/0.85)" fontWeight="500">{t}</text>
               </motion.g>
@@ -230,7 +238,7 @@ export function StreamingBiasSignificanceMotionChart({
           {yTicks.map((t, i) => {
             const y = yScale(t);
             return (
-              <motion.g key={`yt-${t}`} initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .3 + i * .05 }}>
+              <motion.g key={`yt-${t}`} initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .55 + i * .07 }}>
                 <line x1={margin.left - 6} x2={margin.left} y1={y} y2={y} stroke="hsl(var(--border)/0.7)" />
                 <text x={margin.left - 10} y={y + 3} textAnchor="end" fontSize={11} fill="hsl(var(--foreground)/0.85)" fontWeight="500">{t}</text>
               </motion.g>
@@ -239,7 +247,7 @@ export function StreamingBiasSignificanceMotionChart({
 
           {/* Points */}
           <AnimatePresence>
-            {points.map(p => {
+            {readyForPoints && points.map(p => {
               const isNew = newIds.includes(p.id);
               const baseColor = COLOR_MAP[p.color] || '#999';
               return (
@@ -249,7 +257,7 @@ export function StreamingBiasSignificanceMotionChart({
                   cy={yScale(p.y)}
                   r={6}
                   initial="hidden"
-                  animate={isNew ? { opacity: 1, scale: [0, 1.5, 1], transition: { duration: 1.05, ease: 'easeOut' } } : { opacity: 1, scale: 1 }}
+                  animate={isNew ? { opacity: 1, scale: [0, 1.55, 1], transition: { duration: 1.25, ease: 'easeOut', delay: 0.05 } } : { opacity: 1, scale: 1, transition: { delay: 0.05 } }}
                   strokeWidth={1.8}
                   fill={baseColor + '88'}
                   style={{ cursor: 'pointer', filter: hovered?.id === p.id ? 'drop-shadow(0 0 6px rgba(255,255,255,.55))' : 'none' }}
@@ -272,9 +280,9 @@ export function StreamingBiasSignificanceMotionChart({
       </svg>
       {/* Increase axis label contrast */}
       <motion.div className="absolute left-1/2 -translate-x-1/2 bottom-1 text-[12px] text-foreground"
-        initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0, transition: { delay: .85 } }}>Bias</motion.div>
-      <motion.div className="absolute top-1/2 left-2 text-[12px] text-foreground" style={{ writingMode: 'vertical-rl', transform: 'translateY(-50%) rotate(180deg)' }}
-        initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0, transition: { delay: .95 } }}>Significance</motion.div>
+        initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0, transition: { delay: 1.3 } }}>Bias</motion.div>
+      <motion.div className="absolute top-1/2 left-2 text-[12px] text-foreground" style={{ writingMode: 'vertical-rl', transform: 'translateY(-55%) rotate(180deg)' }}
+        initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0, transition: { delay: 1.45 } }}>Significance</motion.div>
 
       {/* Tooltip */}
       <AnimatePresence>
