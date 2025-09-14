@@ -83,31 +83,34 @@ def run_pipeline(args):
     all_persp: List[Dict[str, Any]] = []
     color_groups = group_by_color(scaffold)
     
+    # Optionally stream each color group via callback
+    stream_callback = getattr(args, "stream_callback", None)
+
     for ci, group in enumerate(color_groups):
         color_name = group[0]['color']
         print(f"[info] Processing {color_name} perspectives ({len(group)} items)")
-        
+
         # Generate main batch for this color
         prompt_text = build_color_prompt(statement, group, existing_texts)
         raw = call_model(client, endpoint, prompt_text, temperature=args.temperature)
-        
+
         try:
             generated = parse_model_output(raw)
         except Exception as e:
             print(f"[warn] {color_name} parse failed, retrying with lower temperature")
             raw_retry = call_model(client, endpoint, prompt_text, temperature=0.2)
             generated = parse_model_output(raw_retry)
-        
+
         # Validate and categorize results
         valid_perspectives, needs_repair = validate_and_categorize_perspectives(
             group, generated, existing_texts
         )
-        
+
         # Batch repair if needed (max 3 items to avoid overwhelming)
         if needs_repair:
             print(f"[info] Repairing {len(needs_repair)} items for {color_name}")
             repair_batches = [needs_repair[i:i+3] for i in range(0, len(needs_repair), 3)]
-            
+
             for batch in repair_batches:
                 repair_items = []
                 for _, slot, gen in batch:
@@ -117,17 +120,17 @@ def run_pipeline(args):
                         "current_text": gen.get("text", ""),
                         "current_significance": gen.get("significance_y", "")
                     })
-                
+
                 repair_prompt = build_repair_prompt(statement, repair_items, existing_texts)
-                
+
                 try:
                     repair_raw = call_model(client, endpoint, repair_prompt, temperature=0.3, delay_after=1.5)
                     repair_results = parse_model_output(repair_raw)
-                    
+
                     # Process repair results
                     repaired = process_repair_results(batch, repair_results, existing_texts)
                     valid_perspectives.extend(repaired)
-                    
+
                 except Exception as e:
                     print(f"[warn] Repair failed, using fallbacks")
                     # Use fallbacks for all items in this batch
@@ -138,10 +141,17 @@ def run_pipeline(args):
                         existing_texts.add(fallback["text"])
                         fallback_perspectives.append(fallback)
                     valid_perspectives.extend(fallback_perspectives)
-        
+
         # Sort results by bias_x to maintain order
         valid_perspectives.sort(key=lambda x: x["bias_x"])
         all_persp.extend(valid_perspectives)
+
+        # Stream this color group if callback is provided
+        if stream_callback:
+            try:
+                stream_callback(color_name, valid_perspectives)
+            except Exception as e:
+                print(f"[warn] Streaming callback failed for {color_name}: {e}")
     
     # Final sort and output
     all_persp.sort(key=lambda x: x["bias_x"])
