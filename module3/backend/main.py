@@ -56,7 +56,18 @@ async def clustering_complete(request: Request):
     """Endpoint to handle clustering completion and signal server shutdown."""
     server_shutdown_event.set()
     return {"status": "server will end"}
-
+@app.get("/api/status")
+async def check_status():
+    # Check if processing is complete by looking for output file
+    output_exists = os.path.exists("output.json")
+    clustering_exists = os.path.exists("final_output/common.json")
+    
+    if clustering_exists:
+        return {"status": "completed"}
+    elif output_exists:
+        return {"status": "processing", "progress": 50}
+    else:
+        return {"status": "processing", "progress": 10}
 if __name__ == "__main__":
     import uvicorn
     # Start server in a thread
