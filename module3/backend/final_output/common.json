@@ -1,0 +1,26 @@
+[
+    {
+        "color": "green",
+        "bias_x": 0.4382,
+        "significance_y": 0.8,
+        "text": "The statement is likely aimed at ensuring stability on India's northern border."
+    },
+    {
+        "color": "green",
+        "bias_x": 0.4607,
+        "significance_y": 0.7,
+        "text": "This statement is probably meant to reassure India's own citizens about its foreign policy objectives."
+    },
+    {
+        "color": "green",
+        "bias_x": 0.4831,
+        "significance_y": 0.7,
+        "text": "India's engagement with Nepal's political process is a long-standing practice."
+    },
+    {
+        "color": "green",
+        "bias_x": 0.5169,
+        "significance_y": 0.7,
+        "text": "The statement is a pragmatic approach to a sensitive foreign policy issue."
+    }
+]

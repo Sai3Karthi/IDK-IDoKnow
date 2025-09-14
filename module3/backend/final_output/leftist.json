@@ -1,0 +1,74 @@
+[
+    {
+        "color": "red",
+        "bias_x": 0.0,
+        "significance_y": 0.8,
+        "text": "India's interference in Nepal's internal affairs is a violation of its sovereignty."
+    },
+    {
+        "color": "orange",
+        "bias_x": 0.1461,
+        "significance_y": 0.8,
+        "text": "India should offer constructive support rather than making pronouncements on a sovereign nation's internal matters."
+    },
+    {
+        "color": "yellow",
+        "bias_x": 0.3371,
+        "significance_y": 0.75,
+        "text": "The statement likely reflects India's concerns about the stability of its northern border region."
+    },
+    {
+        "color": "yellow",
+        "bias_x": 0.2921,
+        "significance_y": 0.71,
+        "text": "The nuances of the new constitution require careful study before making definitive judgments."
+    },
+    {
+        "color": "red",
+        "bias_x": 0.0225,
+        "significance_y": 0.7,
+        "text": "India's historical pattern of meddling in its neighbors' politics is on full display again."
+    },
+    {
+        "color": "red",
+        "bias_x": 0.0674,
+        "significance_y": 0.7,
+        "text": "This is a blatant attempt to impose India's political and economic agenda on Nepal."
+    },
+    {
+        "color": "red",
+        "bias_x": 0.1236,
+        "significance_y": 0.7,
+        "text": "This is a dangerous precedent for how India intends to interact with its smaller neighbors."
+    },
+    {
+        "color": "orange",
+        "bias_x": 0.1685,
+        "significance_y": 0.7,
+        "text": "India's focus should be on strengthening bilateral ties based on mutual respect and equality."
+    },
+    {
+        "color": "orange",
+        "bias_x": 0.2022,
+        "significance_y": 0.7,
+        "text": "The statement might inadvertently fuel anti-India sentiment within Nepal."
+    },
+    {
+        "color": "orange",
+        "bias_x": 0.236,
+        "significance_y": 0.7,
+        "text": "The statement could create unnecessary diplomatic friction between two closely linked nations."
+    },
+    {
+        "color": "orange",
+        "bias_x": 0.2697,
+        "significance_y": 0.7,
+        "text": "India's official stance should be nuanced to avoid alienating its Nepali neighbors."
+    },
+    {
+        "color": "yellow",
+        "bias_x": 0.4157,
+        "significance_y": 0.7,
+        "text": "The statement should be seen as part of India's broader regional engagement strategy."
+    }
+]
